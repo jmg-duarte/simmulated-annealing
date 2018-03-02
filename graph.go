@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"math"
 	"math/rand"
 	"time"
 )
@@ -19,7 +20,7 @@ type Graph struct {
 func (g *Graph) AddNode(n *Node) *Node {
 	v, exists := g.Nodes[n.ID]
 	if !exists {
-		defer fmt.Printf("Node <%s> added to the graph\n", n.ID)
+		//defer fmt.Printf("Node <%s> added to the graph\n", n.ID)
 		// Adds node to the Graph map
 		g.Nodes[n.ID] = n
 		// Adds node to the Graph node list
@@ -28,7 +29,7 @@ func (g *Graph) AddNode(n *Node) *Node {
 		// Returns the new node
 		return n
 	}
-	fmt.Printf("Node <%s> already existed, no changes were made\nGraph Entry: <%s>\n", n.ID, n)
+	//fmt.Printf("Node <%s> already existed, no changes were made\nGraph Entry: <%s>\n", n.ID, n)
 	// Returns the old node
 	return v
 }
@@ -49,20 +50,60 @@ func (g Graph) Size() int {
 func (g Graph) GenerateRandomPath() *Path {
 	randGen := rand.New(rand.NewSource(time.Now().UnixNano()))
 
-	l := int32(len(g.NodeList))
+	l := len(g.NodeList)
 	nodeStack := make([]*Node, l)
 	copy(nodeStack, g.NodeList)
+	path := &Path{nodeStack}
 
-	var randomIndex int32
-	var tempNode *Node
-	for i := int32(0); i < l; i++ {
-		randomIndex = randGen.Int31n(l)
-		tempNode = nodeStack[i]
+	var randomIndex int
+	for i := 0; i < l; i++ {
+		randomIndex = randGen.Intn(l)
+		tempNode := nodeStack[i]
 		nodeStack[i] = nodeStack[randomIndex]
 		nodeStack[randomIndex] = tempNode
 	}
 
-	return &Path{nodeStack}
+	return path
+}
+
+// SimmulatedAnnealing runs the problem simmulation
+func (g Graph) SimmulatedAnnealing(temperature float64, iterations int) *Path {
+	currentPath := g.GenerateRandomPath()
+	bestPath := currentPath
+	temp := temperature
+	iter := iterations
+
+	// Iterates "iterations" times for the same temperature
+	for temp > 5 {
+		for n := 1; n < iter; n++ {
+			//fmt.Println(currentPath)
+			nextPath := currentPath.GenerateNeighbour()
+			currentPathDist := currentPath.TotalDist()
+
+			dist := nextPath.TotalDist() - currentPathDist
+			if dist < 0 {
+				currentPath = nextPath
+				if currentPathDist < bestPath.TotalDist() {
+					bestPath = currentPath
+				}
+			} else {
+				if changeToWorstPath(dist, temp) {
+					currentPath = nextPath
+				}
+			}
+
+			// Add function to change number of iterations
+
+			// Geometric Decay - change later
+			temp = 0.95 * temp
+		}
+	}
+	return bestPath
+}
+
+func changeToWorstPath(delta, temperature float64) bool {
+	randGen := rand.New(rand.NewSource(time.Now().UnixNano()))
+	return math.Exp(-delta/temperature) > randGen.Float64()
 }
 
 func (g Graph) String() string {

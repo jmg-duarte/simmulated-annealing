@@ -36,7 +36,12 @@ func main() {
 	p := g.GenerateRandomPath()
 	fmt.Println(p)
 
+	p.GenerateNeighbour()
+
+	fmt.Println(g.SimmulatedAnnealing(3000, 5))
 }
+
+//type Decay func(float64, float64)
 
 // For each line of the file, splits with "\t",
 // validates the line as a Node (a valid line would be "ID\tYCoord\tYCoord")

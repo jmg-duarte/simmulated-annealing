@@ -14,16 +14,17 @@ type Node struct {
 }
 
 // Equals checks if the given neighbor Node is the same as self
-func (n Node) Equals(neighbor *Node) bool {
-	return n.ID == neighbor.ID &&
-		n.XCoordinate == neighbor.XCoordinate &&
-		n.YCoordinate == neighbor.YCoordinate
+func (n Node) Equals(neighbour *Node) bool {
+	return n.ID == neighbour.ID &&
+		n.XCoordinate == neighbour.XCoordinate &&
+		n.YCoordinate == neighbour.YCoordinate
 }
 
 // Dist calculates the Pythagorean distance between two Nodes
-func (n Node) Dist(neighbor *Node) float64 {
-	x := math.Abs(n.XCoordinate - neighbor.XCoordinate)
-	y := math.Abs(n.YCoordinate - neighbor.YCoordinate)
+func (n Node) Dist(neighbour *Node) float64 {
+
+	x := math.Abs(n.XCoordinate - neighbour.XCoordinate)
+	y := math.Abs(n.YCoordinate - neighbour.YCoordinate)
 	return math.Sqrt(math.Pow(x, 2) + math.Pow(y, 2))
 }
 
