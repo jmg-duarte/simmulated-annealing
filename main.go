@@ -10,8 +10,8 @@ import (
 )
 
 func main() {
-	if len(os.Args) != 2 {
-		log.Fatal("usage: sim <node_file>")
+	if len(os.Args) != 3 {
+		log.Fatal("usage: sim <node_file> <temperature>")
 	}
 
 	f, err := os.Open(os.Args[1])
@@ -31,14 +31,18 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(g)
+	//fmt.Println(g)
 
 	p := g.GenerateRandomPath()
-	fmt.Println(p)
+	//fmt.Println(p)
 
 	p.GenerateNeighbour()
 
-	fmt.Println(g.SimmulatedAnnealing(3000, 5))
+	t, err := strconv.ParseFloat(os.Args[2], 64)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(g.SimmulatedAnnealing(t, 5))
 }
 
 //type Decay func(float64, float64)
