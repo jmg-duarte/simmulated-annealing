@@ -17,6 +17,8 @@ func main() {
 	tempStart := flag.Float64("t", 9000.0, "starting temperature")
 	tempLimit := flag.Float64("tL", 5.0, "temperature limit")
 	nIterations := flag.Int("nI", 5, "number of iterations per temperature")
+	decay := flag.String("d", "geometric", "temperature decay function\ngeometric - T[k] = alfa * T[k-1]")
+	variance := flag.Float64("v", 0.95, "the proportion of decay")
 
 	flag.Parse()
 
@@ -47,6 +49,7 @@ func main() {
 		StartingTemperature: *tempStart,
 		LimitTemperature:    *tempLimit,
 		NumberOfIterations:  *nIterations,
+		Decay:               decayFunction(*decay, *variance),
 	}
 
 	setupProblem(prob)
@@ -63,6 +66,19 @@ func setupProblem(p *Problem) error {
 			p.StartingTemperature, p.LimitTemperature, p.NumberOfIterations))
 
 	return nil
+}
+
+func decayFunction(decay string, variance float64) DecayFunction {
+	switch decay {
+	case "geometric":
+		return GeometricDecay(variance)
+
+	case "gradual":
+		return GradualDecay(variance)
+
+	default:
+		return GeometricDecay(variance)
+	}
 }
 
 //type Decay func(float64, float64)

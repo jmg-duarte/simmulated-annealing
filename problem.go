@@ -8,4 +8,5 @@ type Problem struct {
 	StartingTemperature float64
 	LimitTemperature    float64
 	NumberOfIterations  int
+	Decay               DecayFunction
 }
