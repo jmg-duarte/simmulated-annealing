@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -12,8 +13,13 @@ import (
 )
 
 func main() {
-	if len(os.Args) != 3 {
-		log.Fatal("usage: sim <node_file> <temperature>")
+
+	tempStart := flag.Float64("t", 9000.0, "starting temperature")
+	tempLimit := flag.Float64("tL", 5.0, "temperature limit")
+	nIterations := flag.Int("nI", 5, "number of iterations per temperature")
+
+	if len(os.Args) < 2 {
+		log.Fatal("usage: sim <node_file> [flags]")
 	}
 
 	f, err := os.Open(os.Args[1])
@@ -34,15 +40,27 @@ func main() {
 		log.Fatal(err)
 	}
 
-	p := g.GenerateRandomPath()
-
-	p.GenerateNeighbour()
-
-	t, err := strconv.ParseFloat(os.Args[2], 64)
-	if err != nil {
-		log.Fatal(err)
+	prob := &Problem{
+		Graph:               g,
+		StartingTemperature: *tempStart,
+		LimitTemperature:    *tempLimit,
+		NumberOfIterations:  *nIterations,
 	}
-	fmt.Println(g.SimmulatedAnnealing(t, 5))
+
+	setupProblem(prob)
+}
+
+func setupProblem(p *Problem) error {
+	graph := p.Graph
+	path := graph.GenerateRandomPath()
+
+	path.GenerateNeighbour()
+
+	fmt.Println(
+		graph.SimmulatedAnnealing(
+			p.StartingTemperature, p.LimitTemperature, p.NumberOfIterations))
+
+	return nil
 }
 
 //type Decay func(float64, float64)
@@ -94,5 +112,6 @@ func validateNode(line []string) (*graph.Node, error) {
 	return &graph.Node{
 		ID:          line[0],
 		XCoordinate: x,
-		YCoordinate: y}, nil
+		YCoordinate: y,
+	}, nil
 }

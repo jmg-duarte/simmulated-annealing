@@ -67,7 +67,7 @@ func (g Graph) GenerateRandomPath() *Path {
 }
 
 // SimmulatedAnnealing runs the problem simmulation
-func (g Graph) SimmulatedAnnealing(temperature float64, iterations int) *Path {
+func (g Graph) SimmulatedAnnealing(temperature, limitTemperature float64, iterations int) *Path {
 	currentPath := g.GenerateRandomPath()
 	bestPath := currentPath
 	temp := temperature
