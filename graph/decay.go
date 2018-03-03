@@ -1,6 +1,19 @@
-package main
+package graph
 
 type DecayFunction func(float64) float64
+
+func Decay(decay string, variance float64) DecayFunction {
+	switch decay {
+	case "geometric":
+		return GeometricDecay(variance)
+
+	case "gradual":
+		return GradualDecay(variance)
+
+	default:
+		return GeometricDecay(variance)
+	}
+}
 
 // T[k] = T[k-1] * alfa
 func GeometricDecay(alfa float64) DecayFunction {
