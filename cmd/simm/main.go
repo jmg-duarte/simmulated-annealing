@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/jmg-duarte/simmulated-annealing/graph"
+	"github.com/jmg-duarte/simmulated-annealing/pkg/graph"
 )
 
 func main() {
