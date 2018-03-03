@@ -4,8 +4,10 @@ import (
 	"fmt"
 )
 
+// NodeArray represents an array of nodes
 type NodeArray []*Node
 
+// Reverse a NodeArray ordering
 func (n NodeArray) Reverse() NodeArray {
 	l := len(n)
 	rev := make(NodeArray, l)
