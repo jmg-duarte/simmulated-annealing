@@ -7,6 +7,8 @@ import (
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/jmg-duarte/simmulated-annealing/graph"
 )
 
 func main() {
@@ -31,10 +33,8 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	//fmt.Println(g)
 
 	p := g.GenerateRandomPath()
-	//fmt.Println(p)
 
 	p.GenerateNeighbour()
 
@@ -50,14 +50,14 @@ func main() {
 // For each line of the file, splits with "\t",
 // validates the line as a Node (a valid line would be "ID\tYCoord\tYCoord")
 // then adds the node to the Graph
-func parseFile(scanner *bufio.Scanner) (*Graph, error) {
+func parseFile(scanner *bufio.Scanner) (*graph.Graph, error) {
 	// TODO Make 32 be modifiable
 	// Mental note:
 	// Don't be retarded and remember to use make(T, l, c)
 	// for arrays that will be filled and not copied to
-	nodes := Graph{
-		Nodes:    make(map[string]*Node),
-		NodeList: make([]*Node, 0, 32),
+	nodes := graph.Graph{
+		Nodes:    make(map[string]*graph.Node),
+		NodeList: make(graph.NodeArray, 0, 32),
 	}
 
 	// Skips the header line
@@ -76,7 +76,7 @@ func parseFile(scanner *bufio.Scanner) (*Graph, error) {
 	return &nodes, nil
 }
 
-func validateNode(line []string) (*Node, error) {
+func validateNode(line []string) (*graph.Node, error) {
 	if len(line) != 3 {
 		return nil, fmt.Errorf("invalid line: cannot contain more than 3 elements\n\t%s", line)
 	}
@@ -91,5 +91,8 @@ func validateNode(line []string) (*Node, error) {
 		return nil, err
 	}
 
-	return &Node{line[0], x, y}, nil
+	return &graph.Node{
+		ID:          line[0],
+		XCoordinate: x,
+		YCoordinate: y}, nil
 }
