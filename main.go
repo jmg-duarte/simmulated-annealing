@@ -18,6 +18,8 @@ func main() {
 	tempLimit := flag.Float64("tL", 5.0, "temperature limit")
 	nIterations := flag.Int("nI", 5, "number of iterations per temperature")
 
+	flag.Parse()
+
 	if len(os.Args) < 2 {
 		log.Fatal("usage: sim <node_file> [flags]")
 	}
